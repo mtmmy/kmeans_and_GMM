@@ -1,7 +1,7 @@
 import numpy as np
 import loadCSV
 
-def reduction(records):
+def pca(records):
     means = np.mean(records.T, axis=1)
     centered = records - means
     covM = np.cov(centered.T)

@@ -1,49 +1,80 @@
-import loadCSV
-import pca
-import random
+#%%
+# imports and reading data
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
+import loadCSV
+from kmeans import kmeans
+from pca import pca
+from gmm import gmm
+import seaborn as sns
 
-def getOFV(clusters, centers):
-    ofv = 0
-    for i in range(len(centers)):
-        for cluster in clusters[i]:
-            ofv += sum((cluster - centers[i]) ** 2)
-    return ofv
+plt.rcParams['axes.facecolor'] = 'white'
+plt.rcParams['figure.facecolor'] = 'white'
+plt.rcParams['axes.edgecolor'] = 'black'
+plt.rcParams['xtick.color'] = 'black'
+plt.rcParams['ytick.color'] = 'black'
+plt.rcParams['grid.color'] = 'black'
+plt.rcParams['figure.edgecolor'] = 'white'
+plt.rcParams['savefig.transparent'] = False
 
-def clustering(centers, data):
-    clusters = [[] for _ in range(len(centers))]
-    for d in data:
-        distances = []
-        for c in centers:
-            distances.append(np.linalg.norm(d - c))
-        closest = distances.index(min(distances))
-        clusters[closest].append(d)
-    return (getOFV(clusters, centers), clusters)
-
-def kmeans(data):
-    allOFV = []
-    for c in range(2, 11):
-        cIdx = random.sample(range(len(data)), c)
-        centers = [data[c] for c in cIdx]
-        oldOFV = -1
-        while 1:
-            ofv, clusters = clustering(centers, data)
-            if ofv == oldOFV:
-                break
-            oldOFV = ofv
-            centers = [sum(np.array(c), 0) / len(c) for c in clusters]
-        allOFV.append(oldOFV)
-    print(allOFV)
-
-# main
-ks = [k for k in range(2, 11)]
 data = loadCSV.loadFile("audioData.csv")
-print(ks)
-print("Original Data")
-kmeans(data)
-print("PCAed Data")
-kmeans(pca.reduction(data))
 
+#%%
+# Kmeans
 
-# covData = np.cov(data)
-# print("")
+ks = [k for k in range(2, 11)]
+oriKmeans = kmeans(data)
+plt.figure(1)
+plt.plot(ks, oriKmeans)
+plt.xlabel('Ks')
+plt.ylabel('Object Function Value')
+plt.title('Kmeans')
+
+#%%
+# Kmeans with PCA
+
+pcaKmeans = kmeans(pca(data))
+plt.figure(2)
+plt.plot(ks, pcaKmeans)
+plt.xlabel('Ks')
+plt.ylabel('Object Function Value')
+plt.title('PCA Kmeans')
+
+#%%
+# GMM
+centers, clusters = gmm(data)
+c1 = np.array(clusters[0])
+c2 = np.array(clusters[1])
+
+while 1:
+    if len(c1) > 30 and len(c2) > 30:
+        break
+    centers, clusters = gmm(data)
+    c1 = np.array(clusters[0])
+    c2 = np.array(clusters[1])
+
+plt.figure(3)
+plt.scatter(centers[0][0], centers[0][1], marker="*", c="r", s=500)
+plt.scatter(centers[1][0], centers[1][1], marker="*", c="b", s=500)
+plt.scatter(c1[:,0], c1[:,1], c="r")
+plt.scatter(c2[:,0], c2[:,1], c="b")
+
+#%%
+#GMM PCA
+centers, clusters = gmm(pca(data))
+c1 = np.array(clusters[0])
+c2 = np.array(clusters[1])
+
+while 1:
+    if len(c1) > 10 and len(c2) > 10:
+        break
+    centers, clusters = gmm(data)
+    c1 = np.array(clusters[0])
+    c2 = np.array(clusters[1])
+
+plt.figure(4)
+plt.scatter(centers[0][0], centers[0][1], marker="*", c="r", s=500)
+plt.scatter(centers[1][0], centers[1][1], marker="*", c="b", s=500)
+plt.scatter(c1[:,0], c1[:,1], c="r")
+plt.scatter(c2[:,0], c2[:,1], c="b")
