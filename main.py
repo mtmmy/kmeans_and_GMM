@@ -22,14 +22,13 @@ data = loadCSV.loadFile("audioData.csv")
 
 #%%
 # Kmeans
-
 ks = [k for k in range(2, 11)]
 oriKmeans = kmeans(data)
 plt.figure(1)
 plt.plot(ks, oriKmeans)
-plt.xlabel('Ks')
-plt.ylabel('Object Function Value')
-plt.title('Kmeans')
+plt.xlabel('Ks', color="black")
+plt.ylabel('Object Function Value', color="black")
+plt.title('Kmeans', color="black")
 
 #%%
 # Kmeans with PCA
@@ -37,9 +36,9 @@ plt.title('Kmeans')
 pcaKmeans = kmeans(pca(data))
 plt.figure(2)
 plt.plot(ks, pcaKmeans)
-plt.xlabel('Ks')
-plt.ylabel('Object Function Value')
-plt.title('PCA Kmeans')
+plt.xlabel('Ks', color="black")
+plt.ylabel('Object Function Value', color="black")
+plt.title('PCA Kmeans', color="black")
 
 #%%
 # GMM
@@ -48,7 +47,7 @@ c1 = np.array(clusters[0])
 c2 = np.array(clusters[1])
 
 while 1:
-    if len(c1) > 30 and len(c2) > 30:
+    if len(c1) > 0 and len(c2) > 0:
         break
     centers, clusters = gmm(data)
     c1 = np.array(clusters[0])
@@ -59,6 +58,7 @@ plt.scatter(centers[0][0], centers[0][1], marker="*", c="r", s=500)
 plt.scatter(centers[1][0], centers[1][1], marker="*", c="b", s=500)
 plt.scatter(c1[:,0], c1[:,1], c="r")
 plt.scatter(c2[:,0], c2[:,1], c="b")
+plt.title("GMM", color="black")
 
 #%%
 #GMM PCA
@@ -67,7 +67,7 @@ c1 = np.array(clusters[0])
 c2 = np.array(clusters[1])
 
 while 1:
-    if len(c1) > 10 and len(c2) > 10:
+    if len(c1) > 0 and len(c2) > 0:
         break
     centers, clusters = gmm(data)
     c1 = np.array(clusters[0])
@@ -78,3 +78,4 @@ plt.scatter(centers[0][0], centers[0][1], marker="*", c="r", s=500)
 plt.scatter(centers[1][0], centers[1][1], marker="*", c="b", s=500)
 plt.scatter(c1[:,0], c1[:,1], c="r")
 plt.scatter(c2[:,0], c2[:,1], c="b")
+plt.title("PCA GMM", color="black")

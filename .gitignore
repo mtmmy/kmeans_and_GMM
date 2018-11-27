@@ -1,3 +1,7 @@
 audioData.csv
 .vscode
 __pycache__
+*.png
+.idea
+*.html
+test.py

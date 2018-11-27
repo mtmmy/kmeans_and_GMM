@@ -12,5 +12,6 @@ def pca(records):
     eigenVectors = eigenVectors[:,sortedIdx]
 
     eigenVectors = eigenVectors[:,:2]
+    print(eigenVectors)
     return records.dot(eigenVectors)
 

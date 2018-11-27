@@ -28,22 +28,19 @@ def gmm(data):
     cIdx = random.sample(range(len(data)), 2)
     centers = [data[i] for i in cIdx]
     covM = np.cov(data.T)
-    N, D = np.shape(data)
-    covDet = np.linalg.det(covM)
-    # divisor = np.power(np.power((2 * np.pi), D) * covDet, 0.5)
     pU = [0.5, 0.5]
     tolerance = 0.00001
     EZij = []
     while 1:
         EZij = Estep(data, centers, covM, pU)
-        newPU = Mstep(EZij)
+        newPU = Mstep(EZij)        
         if abs(newPU[0] - pU[0]) < tolerance:
             break
         pU = newPU
     
     clusters = [[], []]
 
-    for i in range(len(data)):
+    for i in range(len(data)):        
         if EZij[i][0] > EZij[i][1]:
             clusters[0].append(data[i,:2])
         else:
