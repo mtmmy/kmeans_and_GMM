@@ -1,4 +1,3 @@
-import random
 import numpy as np
 
 def getOFV(clusters, centers):
@@ -21,7 +20,8 @@ def clustering(centers, data):
 def kmeans(data):
     allOFV = []
     for c in range(2, 11):
-        cIdx = random.sample(range(len(data)), c)
+        np.random.seed(10)
+        cIdx = [np.random.randint(0, 127) for _ in range(c)]
         centers = [data[i] for i in cIdx]
         oldOFV = -1
         while 1:
@@ -29,6 +29,6 @@ def kmeans(data):
             if ofv == oldOFV:
                 break
             oldOFV = ofv
-            centers = [sum(np.array(c), 0) / len(c) for c in clusters]
+            centers = [0 if len(cluster) == 0 else sum(np.array(cluster), 0) / len(cluster) for cluster in clusters]
         allOFV.append(oldOFV)
     return allOFV

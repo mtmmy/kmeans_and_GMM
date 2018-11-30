@@ -1,4 +1,3 @@
-import random, sys
 import numpy as np
 
 def pdfGMM(centers, record, covM, pU):
@@ -18,22 +17,27 @@ def Estep(data, centers, covM, pU):
         EZij.append([p1, p2])
     return np.array(EZij)
 
-def Mstep(EZij):
+def Mstep(EZij, data):
+    newCenters = [[], []]
+    newCenters[0] = sum(data * EZij[:,0][:, None]) / sum(EZij[:,0])
+    newCenters[1] = sum(data * EZij[:,1][:, None]) / sum(EZij[:,1])
+
     pU = [0, 0]
     pU[0] = sum(EZij[:,0]) / len(EZij)
     pU[1] = sum(EZij[:,1]) / len(EZij)
-    return pU
+    return pU, newCenters
 
 def gmm(data):
-    cIdx = random.sample(range(len(data)), 2)
+    np.random.seed(10)
+    cIdx = [np.random.randint(0, 127) for _ in range(2)]
     centers = [data[i] for i in cIdx]
     covM = np.cov(data.T)
     pU = [0.5, 0.5]
-    tolerance = 0.00001
+    tolerance = 0.0001
     EZij = []
     while 1:
         EZij = Estep(data, centers, covM, pU)
-        newPU = Mstep(EZij)        
+        newPU, centers = Mstep(EZij, data)        
         if abs(newPU[0] - pU[0]) < tolerance:
             break
         pU = newPU
