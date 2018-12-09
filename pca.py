@@ -1,5 +1,4 @@
 import numpy as np
-import loadCSV
 
 def pca(records):
     means = np.mean(records.T, axis=1)
@@ -13,4 +12,3 @@ def pca(records):
 
     eigenVectors = eigenVectors[:,:2]
     return records.dot(eigenVectors)
-
